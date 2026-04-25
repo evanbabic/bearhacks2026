@@ -62,7 +62,7 @@ async def capture_frame(frame: UploadFile = File(..., alias="file")):
                     },
                     "features": [
                         {
-                            "type": "OBJECT_LOCALIZATION",  # 👈 gives bounding boxes
+                            "type": "OBJECT_LOCALIZATION",
                             "maxResults": 10
                         }
                     ]
@@ -77,7 +77,6 @@ async def capture_frame(frame: UploadFile = File(..., alias="file")):
         )
 
         result = response.json()
-        print(result)
 
         return result
 

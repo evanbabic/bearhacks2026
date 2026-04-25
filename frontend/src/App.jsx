@@ -1,14 +1,14 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useCamera } from './hooks/useCamera';
 
 const BACKEND = 'http://localhost:8000';
 
 // ── Status Badge ──────────────────────────────────────────
 const STATES = {
-  idle:       { color: '#4a4845', label: 'Waiting' },
+  idle: { color: '#4a4845', label: 'Waiting' },
   requesting: { color: '#d97706', label: 'Requesting…', pulse: true },
-  live:       { color: '#4ade80', label: 'Live', glow: true },
-  error:      { color: '#f87171', label: 'Camera error' },
+  live: { color: '#4ade80', label: 'Live', glow: true },
+  error: { color: '#f87171', label: 'Camera error' },
 };
 
 function StatusBadge({ status }) {
@@ -54,7 +54,7 @@ function CameraView({ videoRef, status, resolution, onStart, onStop, flash }) {
         background: 'transparent',
         cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.4 : 1,
-        transition: 'background var(--transition-interactive)', 
+        transition: 'background var(--transition-interactive)',
       }}
     >
       {text}
@@ -82,9 +82,9 @@ function CameraView({ videoRef, status, resolution, onStart, onStop, flash }) {
 
         {/* Corner brackets */}
         {[
-          { top: 12,    left: 12,  bw: '2px 0 0 2px', br: '3px 0 0 0' },
-          { top: 12,    right: 12, bw: '2px 2px 0 0', br: '0 3px 0 0' },
-          { bottom: 12, left: 12,  bw: '0 0 2px 2px', br: '0 0 0 3px' },
+          { top: 12, left: 12, bw: '2px 0 0 2px', br: '3px 0 0 0' },
+          { top: 12, right: 12, bw: '2px 2px 0 0', br: '0 3px 0 0' },
+          { bottom: 12, left: 12, bw: '0 0 2px 2px', br: '0 0 0 3px' },
           { bottom: 12, right: 12, bw: '0 2px 2px 0', br: '0 0 3px 0' },
         ].map((c, i) => (
           <span key={i} style={{
@@ -108,7 +108,7 @@ function CameraView({ videoRef, status, resolution, onStart, onStop, flash }) {
           }}>
             <svg width="38" height="38" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.3">
-              <path d="M1 1l22 22M11 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12c.7 0 1.37-.23 1.9-.6M15 5h2l.5 3M3 11h18"/>
+              <path d="M1 1l22 22M11 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12c.7 0 1.37-.23 1.9-.6M15 5h2l.5 3M3 11h18" />
             </svg>
             <p style={{ maxWidth: '22ch', textAlign: 'center', lineHeight: 1.4 }}>
               {status === 'error' ? 'Camera access denied. Check permissions.' : 'Click Start Camera to begin'}
@@ -142,7 +142,7 @@ function CameraView({ videoRef, status, resolution, onStart, onStop, flash }) {
         </span>
         <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
           {toolbarBtn(onStart, isLive || status === 'requesting', 'Start camera', '▷ Start Camera')}
-          {toolbarBtn(onStop,  !isLive,                           'Stop camera',  '◼ Stop')}
+          {toolbarBtn(onStop, !isLive, 'Stop camera', '◼ Stop')}
         </div>
       </div>
     </div>
@@ -163,25 +163,25 @@ function CaptureButton({ disabled, onClick }) {
           border: disabled ? '2px solid var(--color-surface-offset)' : 'none',
           color: '#111',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          
+
           boxShadow: disabled
             ? '0 0 0 4px var(--color-surface-offset)'
             : '0 0 0 4px var(--color-surface-offset), 0 4px 20px oklch(0.48 0.12 192 / 0.45)',
           cursor: disabled ? 'not-allowed' : 'pointer',
           opacity: disabled ? 0.35 : 1,
-          transition: 'all var(--transition-interactive)', 
+          transition: 'all var(--transition-interactive)',
         }}
       >
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none"
           stroke={disabled ? 'var(--color-text-faint)' : '#111'}
           strokeWidth="1.8" strokeLinecap="round">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="14.31" y1="8"   x2="20.05" y2="17.94"/>
-          <line x1="9.69"  y1="8"   x2="21.17" y2="8"/>
-          <line x1="7.38"  y1="12"  x2="13.12" y2="2.06"/>
-          <line x1="9.69"  y1="16"  x2="3.95"  y2="6.06"/>
-          <line x1="14.31" y1="16"  x2="2.83"  y2="16"/>
-          <line x1="16.62" y1="12"  x2="10.88" y2="21.94"/>
+          <circle cx="12" cy="12" r="10" />
+          <line x1="14.31" y1="8" x2="20.05" y2="17.94" />
+          <line x1="9.69" y1="8" x2="21.17" y2="8" />
+          <line x1="7.38" y1="12" x2="13.12" y2="2.06" />
+          <line x1="9.69" y1="16" x2="3.95" y2="6.06" />
+          <line x1="14.31" y1="16" x2="2.83" y2="16" />
+          <line x1="16.62" y1="12" x2="10.88" y2="21.94" />
         </svg>
       </button>
       <span style={{
@@ -194,9 +194,92 @@ function CaptureButton({ disabled, onClick }) {
   );
 }
 
+// ── Canvas Overlay Component ──────────────────────────────
+function AnnotatedImage({ imageSrc, objects }) {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    if (!imageSrc || !canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+
+    const img = new Image();
+    img.src = imageSrc;
+
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      // IMPORTANT: clear before drawing
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw image first
+      ctx.drawImage(img, 0, 0);
+
+      // Then draw boxes
+      objects.forEach(obj => {
+        const verts = obj.boundingPoly.normalizedVertices;
+
+        if (!verts || verts.length < 4) return;
+
+        const x = verts[0].x * canvas.width;
+        const y = verts[0].y * canvas.height;
+        const w = (verts[1].x - verts[0].x) * canvas.width;
+        const h = (verts[2].y - verts[1].y) * canvas.height;
+        const padding = 6;
+        const textHeight = 18;
+
+        // Prevent label from going off the top edge
+        const labelY = Math.max(y, textHeight + padding);
+
+        ctx.strokeStyle = '#ff0000';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y, w, h);
+
+        const label = `${obj.name} ${(obj.score * 100).toFixed(0)}%`;
+
+        ctx.font = '18px monospace';
+        const textWidth = ctx.measureText(label).width;
+
+        ctx.fillStyle = 'rgba(0,0,0,0.65)';
+        ctx.fillRect(
+          x,
+          labelY - textHeight - padding,
+          textWidth + padding * 2,
+          textHeight + padding
+        );
+
+        ctx.fillStyle = '#fff';
+        ctx.fillText(
+          label,
+          x + padding,
+          labelY - padding
+        );
+      });
+    };
+  }, [imageSrc, objects]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{
+        width: '100%',
+        aspectRatio: '16/9',
+        borderRadius: 'var(--radius-md)',
+      }}
+    />
+  );
+}
+
 // ── Result Panel ──────────────────────────────────────────
-function ResultPanel({ result, onClear }) {
+export function ResultPanel({ result, onClear }) {
   if (!result) return null;
+
+  const objects =
+    result?.data?.responses?.[0]?.localizedObjectAnnotations
+      ?.filter(o => o.score > 0.6) ?? [];
+
   return (
     <div style={{
       width: '100%', maxWidth: 800,
@@ -227,34 +310,78 @@ function ResultPanel({ result, onClear }) {
       </div>
 
       {/* Body */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, background: 'var(--color-divider)' }}>
-        <div style={{ background: 'var(--color-surface)', padding: 'var(--space-4)', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-faint)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1,
+        background: 'var(--color-divider)'
+      }}>
+
+        {/* Image + Overlay */}
+        <div style={{
+          background: 'var(--color-surface)',
+          padding: 'var(--space-4)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--space-2)'
+        }}>
+          <span style={{
+            fontSize: 'var(--text-xs)',
+            color: 'var(--color-text-faint)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em'
+          }}>
             RGB Frame
           </span>
+
           {result.localDataUrl
-            ? <img src={result.localDataUrl} alt="Captured frame" style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: 'var(--radius-md)' }} />
-            : <div style={{ width: '100%', aspectRatio: '16/9', borderRadius: 'var(--radius-md)', background: 'var(--color-surface-offset)' }} />
+            ? <AnnotatedImage
+              imageSrc={result.localDataUrl}
+              objects={objects}
+            />
+            : <div style={{
+              width: '100%',
+              aspectRatio: '16/9',
+              borderRadius: 'var(--radius-md)',
+              background: 'var(--color-surface-offset)'
+            }} />
           }
         </div>
-        <div style={{ background: 'var(--color-surface)', padding: 'var(--space-4)', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-faint)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+
+        {/* JSON Response BELOW */}
+        <div style={{
+          background: 'var(--color-surface)',
+          padding: 'var(--space-4)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--space-2)'
+        }}>
+          <span style={{
+            fontSize: 'var(--text-xs)',
+            color: 'var(--color-text-faint)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em'
+          }}>
             Backend Response
           </span>
+
           <pre style={{
-            fontSize: 11, fontFamily: 'Menlo, Consolas, monospace',
+            fontSize: 12,
+            fontFamily: 'Menlo, Consolas, monospace',
             color: 'var(--color-text-muted)',
             background: 'var(--color-surface-offset)',
             borderRadius: 'var(--radius-md)',
             padding: 'var(--space-3)',
-            overflowX: 'auto', whiteSpace: 'pre-wrap', 
+            overflowX: 'auto',
+            whiteSpace: 'pre-wrap',
             border: '1px solid var(--color-border)',
-            flex: 1, minHeight: 80, margin: 0,
+            minHeight: 100,
+            margin: 0,
           }}>
             {result.loading
               ? 'Sending to backend…'
               : result.error
-                ? `Error: ${result.error}\n\nIs FastAPI running on :8000?`
+                ? `Error: ${result.error}`
                 : JSON.stringify(result.data, null, 2)}
           </pre>
         </div>
@@ -267,10 +394,20 @@ function ResultPanel({ result, onClear }) {
         borderTop: '1px solid var(--color-divider)',
       }}>
         <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>
-          {result.loading ? 'Processing…' : result.error ? 'Backend unreachable' : `Response in ${result.ms}ms`}
+          {result.loading
+            ? 'Processing…'
+            : result.error
+              ? 'Backend unreachable'
+              : `Response in ${result.ms}ms`}
         </span>
+
         {result.timestamp && (
-          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-faint)', marginLeft: 'auto', fontVariantNumeric: 'tabular-nums' }}>
+          <span style={{
+            fontSize: 'var(--text-xs)',
+            color: 'var(--color-text-faint)',
+            marginLeft: 'auto',
+            fontVariantNumeric: 'tabular-nums'
+          }}>
             {result.timestamp}
           </span>
         )}
@@ -282,7 +419,7 @@ function ResultPanel({ result, onClear }) {
 // ── App ───────────────────────────────────────────────────
 export default function App() {
   const { videoRef, status, resolution, start, stop, captureFrame } = useCamera();
-  const [flash,  setFlash]  = useState(false);
+  const [flash, setFlash] = useState(false);
   const [result, setResult] = useState(null);
 
 
@@ -305,7 +442,7 @@ export default function App() {
 
     const t0 = Date.now();
     try {
-      const res  = await fetch(`${BACKEND}/capture`, { method: 'POST', body: form });
+      const res = await fetch(`${BACKEND}/capture`, { method: 'POST', body: form });
       const data = await res.json();
       setResult({
         localDataUrl, loading: false, data, error: null,
@@ -313,7 +450,7 @@ export default function App() {
         timestamp: new Date().toLocaleTimeString(),
       });
     } catch (err) {
-     
+
       setResult(prev => ({
         ...prev,
         loading: false,
@@ -347,11 +484,11 @@ export default function App() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
           <svg width="30" height="30" viewBox="0 0 32 32" fill="none" style={{ color: 'var(--color-primary)', flexShrink: 0 }}>
-            <rect x="3" y="3" width="26" height="26" rx="6" stroke="currentColor" strokeWidth="1.5"/>
-            <circle cx="16" cy="14" r="4" stroke="currentColor" strokeWidth="1.5"/>
-            <path d="M9 26c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            <path d="M23 10c1.5 1 2.5 2.8 2.5 4.5s-1 3.5-2.5 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.45"/>
-            <path d="M9 10C7.5 11 6.5 12.8 6.5 14.5S7.5 18 9 19" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.45"/>
+            <rect x="3" y="3" width="26" height="26" rx="6" stroke="currentColor" strokeWidth="1.5" />
+            <circle cx="16" cy="14" r="4" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M9 26c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M23 10c1.5 1 2.5 2.8 2.5 4.5s-1 3.5-2.5 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.45" />
+            <path d="M9 10C7.5 11 6.5 12.8 6.5 14.5S7.5 18 9 19" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.45" />
           </svg>
           <span style={{ fontSize: 'var(--text-lg)', fontWeight: 600, letterSpacing: '-0.02em' }}>
             Sentient{' '}
